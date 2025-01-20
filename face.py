@@ -5,11 +5,14 @@ from datetime import datetime
 import csv
 import os
 
-# Replace webcam capture with a video file
-video_file = "video1.mp4"  # Path to your video file
-video_capture = cv2.VideoCapture(video_file)
+webcam = True
+if not webcam:
+    video_file = "video1.mp4" 
+    video_capture = cv2.VideoCapture(video_file)
+else:
+    video_capture = cv2.VideoCapture(0)
 
-# Create arrays of known face encodings and their names
+
 known_face_encodings = np.load('encodings.npy')
 
 with open('labels.txt', 'r') as file:
@@ -36,7 +39,7 @@ with open(f"{classname}_{current_date}_Attendance.csv", 'w+', newline="") as f:
         
         if not ret:
             print("End of video")
-            break  # Exit the loop when the video ends
+            break 
 
         if process_this_frame:
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -65,8 +68,6 @@ with open(f"{classname}_{current_date}_Attendance.csv", 'w+', newline="") as f:
 
         process_this_frame = not process_this_frame
 
-        # Optionally display the frame
-        """
         for (top, right, bottom, left), name in zip(face_locations, face_names):
             top *= 4
             right *= 4
@@ -83,7 +84,6 @@ with open(f"{classname}_{current_date}_Attendance.csv", 'w+', newline="") as f:
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        """
 
 video_capture.release()
 cv2.destroyAllWindows()
