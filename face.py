@@ -6,6 +6,7 @@ import csv
 import os
 
 webcam = True
+threshold = 0.4
 if not webcam:
     video_file = "video1.mp4" 
     video_capture = cv2.VideoCapture(video_file)
@@ -28,9 +29,8 @@ process_this_frame = True
 now = datetime.now()
 current_date = now.strftime("%Y-%m-%d")
 
-classname = "class"
 
-with open(f"{classname}_{current_date}_Attendance.csv", 'w+', newline="") as f:
+with open(f"Data_{current_date}.csv", 'w+', newline="") as f:
     lnwriter = csv.writer(f)
     lnwriter.writerow(["USN", "Time entered"])
 
@@ -54,7 +54,14 @@ with open(f"{classname}_{current_date}_Attendance.csv", 'w+', newline="") as f:
 
                 face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
                 best_match_index = np.argmin(face_distances)
-                if matches[best_match_index]:
+
+                min_distance = np.min(face_distances)
+                print(min_distance)
+
+                if min_distance > threshold:
+                    name = "Unknown"
+                
+                elif matches[best_match_index]:
                     name = known_face_names[best_match_index]
 
                 face_names.append(name)
